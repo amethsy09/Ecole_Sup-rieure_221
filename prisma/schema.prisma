@@ -1,0 +1,72 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Classe {
+  id          Int        @id @default(autoincrement())
+  code        String
+  libelle     String
+  anneeScolaire String   @map("annee_scolaire")
+  archived    Boolean    @default(false)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  etudiants   Etudiant[]
+
+  @@unique([code, anneeScolaire])
+  @@map("classes")
+}
+
+model Etudiant {
+  id            Int           @id @default(autoincrement())
+  prenom        String
+  nom           String
+  email         String        @unique
+  dateNaissance DateTime      @map("date_naissance")
+  classeId      Int           @map("classe_id")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  classe        Classe        @relation(fields: [classeId], references: [id])
+  inscriptions  Inscription[]
+
+  @@map("etudiants")
+}
+
+model Cours {
+  id           Int           @id @default(autoincrement())
+  code         String        @unique
+  libelle      String
+  coefficient  Float
+  volumeHoraire Int          @map("volume_horaire")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  inscriptions Inscription[]
+
+  @@map("cours")
+}
+
+model Inscription {
+  id              Int              @id @default(autoincrement())
+  etudiantId      Int              @map("etudiant_id")
+  coursId         Int              @map("cours_id")
+  dateInscription DateTime         @map("date_inscription")
+  statut          StatutInscription @default(ACTIVE)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  etudiant        Etudiant         @relation(fields: [etudiantId], references: [id])
+  cours           Cours            @relation(fields: [coursId], references: [id])
+
+  @@unique([etudiantId, coursId])
+  @@map("inscriptions")
+}
+
+enum StatutInscription {
+  ACTIVE
+  ANNULEE
+}
