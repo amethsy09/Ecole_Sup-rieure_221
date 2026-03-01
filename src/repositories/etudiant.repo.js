@@ -9,6 +9,9 @@ class EtudiantRepo extends BaseRepo {
     super(prisma.etudiant);
   }
 
+
+
+
   findByEmail(email) {
     return this.model.findUnique({ where: { email } });
   }
