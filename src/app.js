@@ -1,6 +1,6 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
-import {swaggerSpec} from "./config/swagger.js";
+import swaggerSpec from "./config/swagger.js";
 import Routes from "./routes/index.js";
 class App {
   constructor() {

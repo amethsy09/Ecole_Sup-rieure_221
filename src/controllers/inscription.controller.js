@@ -5,8 +5,8 @@ class InscriptionController {
     }
      test = async (req, res) => {
     try {
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         message: "Controller fonctionne",
         timestamp: new Date().toISOString()
       });
@@ -80,6 +80,14 @@ class InscriptionController {
       next(error);
     }
   };
-
+  reactiver = async (req, res, next) => {
+  try {
+    const { inscriptionId } = req.body;
+    const result = await this.service.reactiverInscription(inscriptionId);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
 }
 export default new InscriptionController();

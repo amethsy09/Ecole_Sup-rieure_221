@@ -54,7 +54,7 @@ class InscriptionService {
     }
 
     // 2. Valider que la date n'est pas dans le futur
-    if (!this.validateDateInscription(dateInscription)) {
+    if (!this.validateInscription(dateInscription)) {
       throw {
         status: 400,
         message: 'La date d\'inscription ne peut pas être dans le futur',
@@ -140,7 +140,15 @@ class InscriptionService {
     }
     return { etudiant, cours };
 }
+async estInscrit(etudiantId) {
+  const count = await this.repo.countActiveByEtudiant(etudiantId);
+  return count > 0;
+}
 
+async coursEstUtilise(coursId) {
+  const count = await this.repo.countActiveByCours(coursId);
+  return count > 0;
+}
 
   }
   export default InscriptionService;
