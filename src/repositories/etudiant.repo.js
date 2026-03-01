@@ -1,10 +1,10 @@
-import Database from "../config/db.js";
-import BaseRepo from "./base.repo.js";
+import database from "../config/db.js";
+import {BaseRepository} from "./BaseRepository.js";
 
-const db = new Database();
-const prisma = db.getClient();
+const prisma = database.getClient();
 
-class EtudiantRepo extends BaseRepo {
+class EtudiantRepo extends BaseRepository {
+
   constructor() {
     super(prisma.etudiant);
   }

@@ -1,5 +1,6 @@
 // src/config/env.js
 import 'dotenv/config';
+import e from 'express';
 
 const env = {
   PORT: process.env.PORT || 5000,
@@ -8,6 +9,6 @@ const env = {
   URI: process.env.URI,
 };
 
-module.exports = env;
+export default env;
 
 

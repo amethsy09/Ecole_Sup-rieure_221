@@ -1,5 +1,5 @@
 import database from '../config/db.js';
-import { BaseRepository } from './base.repo.js';
+import { BaseRepository } from './BaseRepository.js';
 
 export default class ClasseRepository extends BaseRepository {
   constructor() {
