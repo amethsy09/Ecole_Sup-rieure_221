@@ -14,8 +14,8 @@ export default class Routes {
       res.send("Bienvenue sur l'API de gestion de l'école !");
     });
     this.app.use("/api/inscriptions", inscriptionRoutes);
-    //this.app.use("/api/etudiants", etudiantRoutes);
-    //this.app.use("/api/cours", coursRoutes);
+    this.app.use("/api/etudiants", etudiantRoutes);
+    this.app.use("/api/cours", coursRoutes);
     
   
   }
