@@ -1,5 +1,5 @@
 /**
- * @interface InterfaceRepository
+ * @interface BaseRepository
  */
 export class BaseRepository {
   async findAll() {
