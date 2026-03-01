@@ -1,5 +1,515 @@
 /**
  * @swagger
+ * openapi: 3.0.0
+ * info:
+ *   title: API Gestion Scolaire - Ecole Supérieure 221
+ *   version: 1.0.0
+ *   description: >
+ *     API REST permettant la gestion des classes scolaires.
+ *     Elle permet de créer, consulter, modifier, archiver (soft delete)
+ *     et supprimer définitivement des classes.
+ *     Toutes les réponses sont retournées au format JSON.
+ * servers:
+ *   - url: http://localhost:3001
+ *     description: Serveur local de développement
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Classes
+ *     description: Endpoints liés à la gestion des classes scolaires
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Classe:
+ *       type: object
+ *       description: Représente une classe scolaire.
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: Identifiant unique de la classe
+ *           example: 1
+ *         code:
+ *           type: string
+ *           description: Code unique identifiant la classe
+ *           example: "L1-INFO"
+ *         libelle:
+ *           type: string
+ *           description: Nom complet de la classe
+ *           example: "Licence 1 Informatique"
+ *         anneeScolaire:
+ *           type: string
+ *           description: Année académique concernée
+ *           example: "2025-2026"
+ *         archived:
+ *           type: boolean
+ *           description: Indique si la classe est archivée
+ *           example: false
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date de création
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Date de dernière modification
+ *
+ *     ClasseInput:
+ *       type: object
+ *       description: Données nécessaires pour créer une classe
+ *       required:
+ *         - code
+ *         - libelle
+ *         - anneeScolaire
+ *       properties:
+ *         code:
+ *           type: string
+ *           example: "L1-INFO"
+ *         libelle:
+ *           type: string
+ *           example: "Licence 1 Informatique"
+ *         anneeScolaire:
+ *           type: string
+ *           example: "2025-2026"
+ *
+ *     ClasseUpdateInput:
+ *       type: object
+ *       description: Données modifiables d'une classe
+ *       properties:
+ *         code:
+ *           type: string
+ *         libelle:
+ *           type: string
+ *         anneeScolaire:
+ *           type: string
+ *
+ *     ErrorResponse:
+ *       type: object
+ *       description: Structure standard des messages d'erreur
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: false
+ *         message:
+ *           type: string
+ *           example: "Une erreur est survenue"
+ *         errors:
+ *           type: array
+ *           items:
+ *             type: string
+ */
+
+/**
+ * @swagger
+ * /api/classes:
+ *   post:
+ *     summary: Créer une nouvelle classe
+ *     description: >
+ *       Permet d'ajouter une nouvelle classe dans le système.
+ *       Le couple (code + année scolaire) doit être unique.
+ *     tags: [Classes]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ClasseInput'
+ *     responses:
+ *       201:
+ *         description: Classe créée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Classe'
+ *       400:
+ *         description: Données invalides
+ *       409:
+ *         description: Code + année scolaire déjà existants
+ */
+
+/**
+ * @swagger
+ * /api/classes:
+ *   get:
+ *     summary: Lister toutes les classes
+ *     description: >
+ *       Retourne la liste des classes.
+ *       Possibilité de filtrer par statut d'archivage via le paramètre query "archived".
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: query
+ *         name: archived
+ *         schema:
+ *           type: boolean
+ *         description: Filtrer les classes archivées (true/false)
+ *     responses:
+ *       200:
+ *         description: Liste des classes récupérée avec succès
+ */
+
+/**
+ * @swagger
+ * /api/classes/{id}:
+ *   get:
+ *     summary: Obtenir une classe par son ID
+ *     description: Retourne les informations détaillées d'une classe spécifique.
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Identifiant de la classe
+ *     responses:
+ *       200:
+ *         description: Classe trouvée
+ *       404:
+ *         description: Classe introuvable
+ */
+
+/**
+ * @swagger
+ * /api/classes/{id}:
+ *   put:
+ *     summary: Modifier une classe
+ *     description: Met à jour les informations d'une classe existante.
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ClasseUpdateInput'
+ *     responses:
+ *       200:
+ *         description: Classe modifiée avec succès
+ *       404:
+ *         description: Classe introuvable
+ */
+
+/**
+ * @swagger
+ * /api/classes/{id}/archive:
+ *   patch:
+ *     summary: Archiver une classe (soft delete)
+ *     description: >
+ *       Marque la classe comme archivée sans la supprimer physiquement.
+ *       Une classe ne peut pas être archivée si des étudiants y sont inscrits.
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Classe archivée avec succès
+ *       409:
+ *         description: Impossible d'archiver
+ */
+
+/**
+ * @swagger
+ * /api/classes/{id}:
+ *   delete:
+ *     summary: Supprimer définitivement une classe
+ *     description: >
+ *       Supprime définitivement la classe de la base de données.
+ *       Impossible si des étudiants y sont encore liés.
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Classe supprimée avec succès
+ *       404:
+ *         description: Classe introuvable
+ *       409:
+ *         description: Suppression impossible
+ */
+
+
+
+
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Classe:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         code:
+ *           type: string
+ *           example: "L1-INFO"
+ *         libelle:
+ *           type: string
+ *           example: "Licence 1 Informatique"
+ *         anneeScolaire:
+ *           type: string
+ *           example: "2025-2026"
+ *         archived:
+ *           type: boolean
+ *           example: false
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *
+ *     ClasseInput:
+ *       type: object
+ *       required:
+ *         - code
+ *         - libelle
+ *         - anneeScolaire
+ *       properties:
+ *         code:
+ *           type: string
+ *           example: "L1-INFO"
+ *         libelle:
+ *           type: string
+ *           example: "Licence 1 Informatique"
+ *         anneeScolaire:
+ *           type: string
+ *           example: "2025-2026"
+ *
+ *     ClasseUpdateInput:
+ *       type: object
+ *       properties:
+ *         code:
+ *           type: string
+ *           example: "L1-INFO"
+ *         libelle:
+ *           type: string
+ *           example: "Licence 1 Informatique"
+ *         anneeScolaire:
+ *           type: string
+ *           example: "2025-2026"
+ *
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: false
+ *         message:
+ *           type: string
+ *         errors:
+ *           type: array
+ *           items:
+ *             type: string
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Classes
+ *   description: Gestion des classes scolaires
+ */
+
+/**
+ * @swagger
+ * /api/classes:
+ *   post:
+ *     summary: Créer une nouvelle classe
+ *     tags: [Classes]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ClasseInput'
+ *     responses:
+ *       201:
+ *         description: Classe créée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Classe'
+ *       400:
+ *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       409:
+ *         description: Code + année scolaire déjà existants
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/classes:
+ *   get:
+ *     summary: Lister toutes les classes
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: query
+ *         name: archived
+ *         schema:
+ *           type: boolean
+ *         description: Inclure les classes archivées (true/false)
+ *     responses:
+ *       200:
+ *         description: Liste des classes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Classe'
+ */
+
+/**
+ * @swagger
+ * /api/classes/{id}:
+ *   get:
+ *     summary: Obtenir une classe par son ID
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Détail de la classe
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Classe'
+ *       404:
+ *         description: Classe introuvable
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/classes/{id}:
+ *   put:
+ *     summary: Modifier une classe
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ClasseUpdateInput'
+ *     responses:
+ *       200:
+ *         description: Classe modifiée avec succès
+ *       400:
+ *         description: Données invalides
+ *       404:
+ *         description: Classe introuvable
+ *       409:
+ *         description: Code + année scolaire déjà existants
+ */
+
+/**
+ * @swagger
+ * /api/classes/{id}/archive:
+ *   patch:
+ *     summary: Archiver une classe (soft delete)
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Classe archivée avec succès
+ *       404:
+ *         description: Classe introuvable
+ *       409:
+ *         description: Impossible d'archiver, des étudiants sont inscrits
+ */
+
+/**
+ * @swagger
+ * /api/classes/{id}:
+ *   delete:
+ *     summary: Supprimer définitivement une classe
+ *     tags: [Classes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Classe supprimée avec succès
+ *       404:
+ *         description: Classe introuvable
+ *       409:
+ *         description: Impossible de supprimer, des étudiants sont inscrits
+ */
+
+
+
+
+/**
+ * @swagger
  * tags:
  *   name: Cours
  *   description: API pour la gestion des cours
