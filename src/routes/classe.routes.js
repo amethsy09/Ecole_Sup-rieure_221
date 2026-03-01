@@ -1,67 +1,25 @@
-import ClasseService from "../services/classe.service.js";
+import { Router } from "express";
+import ClasseController from "../controllers/classe.controller.js";
 
-export default class ClasseController {
-  constructor() {
-    this.classeService = new ClasseService();
-  }
+const router = Router();
+const classeController = new ClasseController();
 
-  async getAllClasses(req, res) {
-    try {
-      const includeArchived = req.query.archived === "true";
-      const classes = await this.classeService.getAllClasses(includeArchived);
-      return res.status(200).json(classes);
-    } catch (error) {
-      return res.status(error.statusCode || 500).json({ error: error.message });
-    }
-  }
+// POST /api/classes - Créer une classe
+router.post("/", (req, res) => classeController.createClasse(req, res));
 
-  async getClasseById(req, res) {
-    try {
-      const { id } = req.params;
-      const classe = await this.classeService.getClasseById(id);
-      return res.status(200).json(classe);
-    } catch (error) {
-      return res.status(error.statusCode || 500).json({ error: error.message });
-    }
-  }
+// GET /api/classes - Lister les classes (?archived=true pour inclure archivées)
+router.get("/", (req, res) => classeController.getAllClasses(req, res));
 
-  async createClasse(req, res) {
-    try {
-      const newClasse = await this.classeService.createClasse(req.body);
-      return res.status(201).json(newClasse);
-    } catch (error) {
-      return res.status(error.statusCode || 400).json({ error: error.message });
-    }
-  }
+// GET /api/classes/:id - Détail d'une classe
+router.get("/:id", (req, res) => classeController.getClasseById(req, res));
 
-  async updateClasse(req, res) {
-    try {
-      const { id } = req.params;
-      const updatedClasse = await this.classeService.updateClasse(id, req.body);
-      return res.status(200).json(updatedClasse);
-    } catch (error) {
-      return res.status(error.statusCode || 400).json({ error: error.message });
-    }
-  }
+// PUT /api/classes/:id - Modifier une classe
+router.put("/:id", (req, res) => classeController.updateClasse(req, res));
 
-  async archiveClasse(req, res) {
-    try {
-      const { id } = req.params;
-      const classe = await this.classeService.archiveClasse(id);
-      return res.status(200).json({ message: "Classe archivée avec succès.", data: classe });
-    } catch (error) {
-      return res.status(error.statusCode || 400).json({ error: error.message });
-    }
-  }
+// PATCH /api/classes/:id/archive - Archiver une classe
+router.patch("/:id/archive", (req, res) => classeController.archiveClasse(req, res));
 
-  async deleteClasse(req, res) {
-    try {
-      const { id } = req.params;
-      await this.classeService.deleteClasse(id);
-      return res.status(200).json({ message: "Classe supprimée avec succès." });
-    } catch (error) {
-      return res.status(error.statusCode || 400).json({ error: error.message });
-    }
-  }
-}
- 
+// DELETE /api/classes/:id - Supprimer une classe
+router.delete("/:id", (req, res) => classeController.deleteClasse(req, res));
+
+export default router;
