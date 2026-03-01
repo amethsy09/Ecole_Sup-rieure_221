@@ -1,6 +1,5 @@
 // src/config/db.js
-const { PrismaClient } = require('@prisma/client');
-
+import { PrismaClient } from '@prisma/client';
 class Database {
   constructor() {
     if (!Database.instance) {
@@ -28,4 +27,4 @@ class Database {
 }
 
 const database = new Database();
-module.exports = database;
+export default database;

@@ -1,5 +1,5 @@
 // src/config/env.js
-require('dotenv').config();
+import 'dotenv/config';
 
 const env = {
   PORT: process.env.PORT || 5000,
@@ -7,4 +7,4 @@ const env = {
   DATABASE_URL: process.env.DATABASE_URL,
 };
 
-module.exports = env;
+export default env;
