@@ -1,4 +1,4 @@
-import { createClasseSchema, updateClasseSchema } from "../validators/classe.validator.js";
+import { createClasseSchema, updateClasseSchema } from "../validations/classe.schema.js";
 import {
   createClasse,
   getAllClasses,

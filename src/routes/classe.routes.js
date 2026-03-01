@@ -6,7 +6,7 @@ import {
   handleUpdateClasse,
   handleArchiveClasse,
   handleDeleteClasse,
-} from "../contrôleurs/classe.controller.js";
+} from "../controllers/classe.controller.js";
 
 const router = Router();
 

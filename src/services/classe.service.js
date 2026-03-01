@@ -1,9 +1,9 @@
-import classeRepo from "../dépôts/classe.repo.js";
+import classeRepo from "../repositories/classe.repo.js";
 
 // Créer une classe
 export async function createClasse(data) {
   // Vérifier unicité (code + anneeScolaire)
-  const existing = await classeRepo.findByCodeAndAnnee(data.code, data.anneeScolaire);
+  const existing = await classeRepo.findByCodeAndYear(data.code, data.anneeScolaire);
   if (existing) {
     const error = new Error(`Une classe avec le code "${data.code}" existe déjà pour l'année ${data.anneeScolaire}.`);
     error.statusCode = 409;
@@ -19,7 +19,7 @@ export async function getAllClasses(includeArchived = false) {
 
 // Obtenir une classe par ID
 export async function getClasseById(id) {
-  const classe = await classeRepo.findByIdWithEtudiants(id);
+  const classe = await classeRepo.findById(id);
   if (!classe) {
     const error = new Error(`Classe avec l'ID ${id} introuvable.`);
     error.statusCode = 404;
@@ -41,7 +41,7 @@ export async function updateClasse(id, data) {
   const newCode = data.code || classe.code;
   const newAnnee = data.anneeScolaire || classe.anneeScolaire;
   if (data.code || data.anneeScolaire) {
-    const existing = await classeRepo.findByCodeAndAnnee(newCode, newAnnee, id);
+    const existing = await classeRepo.findByCodeAndYear(newCode, newAnnee, id);
     if (existing) {
       const error = new Error(`Une classe avec le code "${newCode}" existe déjà pour l'année ${newAnnee}.`);
       error.statusCode = 409;
@@ -54,7 +54,7 @@ export async function updateClasse(id, data) {
 
 // Archiver une classe (soft delete)
 export async function archiveClasse(id) {
-  const classe = await classeRepo.findByIdWithEtudiants(id);
+  const classe = await classeRepo.findById(id);
   if (!classe) {
     const error = new Error(`Classe avec l'ID ${id} introuvable.`);
     error.statusCode = 404;
@@ -70,7 +70,7 @@ export async function archiveClasse(id) {
 
 // Supprimer définitivement une classe
 export async function deleteClasse(id) {
-  const classe = await classeRepo.findByIdWithEtudiants(id);
+  const classe = await classeRepo.findById(id);
   if (!classe) {
     const error = new Error(`Classe avec l'ID ${id} introuvable.`);
     error.statusCode = 404;

@@ -1,10 +1,5 @@
-// src/config/env.js
-require('dotenv').config();
+import "dotenv/config";
 
-const env = {
-  PORT: process.env.PORT || 3001,
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  DATABASE_URL: process.env.DATABASE_URL,
-};
-
-module.exports = env;
+export const PORT = process.env.PORT || 3001;
+export const URI = process.env.URI || "http://localhost:3001";
+export const DATABASE_URL = process.env.DATABASE_URL;
