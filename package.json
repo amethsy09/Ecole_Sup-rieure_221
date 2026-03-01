@@ -1,6 +1,7 @@
 {
   "name": "ecole_sup-rieure_221",
   "version": "1.0.0",
+  "type":"module",
   "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
