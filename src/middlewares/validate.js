@@ -4,7 +4,7 @@ const validate = (schema) => (req, _res, next) => {
   if (!result.success) {
     return next({
       status: 400,
-      message: "Validation error",
+      message: "Validation échouée",
       details: result.error.flatten(),
     });
   }
