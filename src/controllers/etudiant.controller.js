@@ -21,7 +21,13 @@ export const list = async (_req, res, next) => {
 
 export const remove = async (req, res, next) => {
   try {
-    const data = await service.deleteEtudiant(Number(req.params.id));
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({ message: "Paramètre 'id' invalide, un entier positif est requis." });
+    }
+
+    const data = await service.deleteEtudiant(id);
     return success(res, 200, "Etudiant supprimé", data);
   } catch (e) {
     next(e);
