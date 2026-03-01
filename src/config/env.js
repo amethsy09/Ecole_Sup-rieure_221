@@ -1,5 +1,5 @@
 
-import "dotenv/config";
+require('dotenv').config();
 
 const env = {
   PORT: process.env.PORT || 5000,
@@ -10,7 +10,7 @@ const env = {
   URI: process.env.URI || `http://localhost:${process.env.PORT || 5000}`,
 };
 
-export default env;
+module.exports = env;
 
 
 
