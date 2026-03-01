@@ -8,6 +8,6 @@ const env = {
   URI: process.env.URI,
 };
 
-export default env;
+module.exports = env;
 
 
