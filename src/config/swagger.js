@@ -50,6 +50,20 @@ const options = {
             updatedAt: { type: "string", format: "date-time" },
           },
         },
+        Etudiant: {
+          type: "object",
+          required: ["prenom", "nom", "email", "dateNaissance", "classeId"],
+          properties: {
+            id: { type: "integer", example: 1 },
+            prenom: { type: "string", example: "Awa" },
+            nom: { type: "string", example: "Diop" },
+            email: { type: "string", example: "awa.diop@ecole221.sn" },
+            dateNaissance: { type: "string", format: "date" },
+            classeId: { type: "integer", example: 1 },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
         Error: {
           type: "object",
           properties: {
