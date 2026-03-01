@@ -30,4 +30,5 @@ class Database {
   }
 }
 
-export default Database;
+const database = new Database();
+export default database;
