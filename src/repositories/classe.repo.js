@@ -1,52 +1,115 @@
+import database from '../config/db.js';
 import { BaseRepository } from './base.repo.js';
-import { prisma } from '../config/db.js';
 
-class ClasseRepository extends BaseRepository {
-  // Implémentation de findAll
-  async findAll(options = {}) {
-    return await prisma.classe.findMany({
-      where: { archived: false, ...options.where },
-      include: options.include
-    });
+export default class ClasseRepository extends BaseRepository {
+  constructor() {
+    super();
+    this.db = database;
+    this.model = this.db.getClient().classe;
   }
 
-  // Implémentation de findById
-  async findById(id) {
-    return await prisma.classe.findUnique({
-      where: { id: parseInt(id) }
-    });
-  }
-
-  // Implémentation de create
-  async create(data) {
-    return await prisma.classe.create({
-      data: data
-    });
-  }
-
-  // Méthode spécifique pour les classes: vérifier l'unicité du code et de l année
-  async findByCodeAndYear(code, anneeScolaire) {
-    return await prisma.classe.findUnique({
-      where: {
-        code_anneeScolaire: { code, anneeScolaire }
+  validateClasse(data) {
+    if (data.code !== undefined) {
+      if (!data.code || data.code.trim() === '') {
+        throw new Error('Le code est obligatoire.');
       }
-    });
+    }
+
+    if (data.anneeScolaire !== undefined) {
+      const anneeScolaireRegex = /^\d{4}-\d{4}$/;
+      if (!anneeScolaireRegex.test(data.anneeScolaire)) {
+        throw new Error('L\'année scolaire doit être au format YYYY-YYYY (ex: 2025-2026).');
+      }
+    }
   }
 
-  // Vérifier s'il y a des étudiants (pour la règle de suppression)
-  async countStudents(id) {
-    const classe = await prisma.classe.findUnique({
+  async findAll() {
+    return await this.model.findMany();
+  }
+
+  async findById(id) {
+    return await this.model.findUnique({
       where: { id: parseInt(id) },
       include: { _count: { select: { etudiants: true } } }
     });
-    return classe?._count?.etudiants || 0;
+  }
+
+  async create(data) {
+    this.validateClasse(data);
+
+    const existing = await this.model.findFirst({
+      where: {
+        code: data.code,
+        anneeScolaire: data.anneeScolaire
+      }
+    });
+    if (existing) {
+      throw new Error(`Une classe avec le code "${data.code}" existe déjà pour l'année ${data.anneeScolaire}.`);
+    }
+
+    return await this.model.create({ data });
+  }
+
+  async update(id, data) {
+    this.validateClasse(data);
+
+    if (data.code || data.anneeScolaire) {
+      const classe = await this.findById(id);
+      const newCode = data.code || classe.code;
+      const newAnnee = data.anneeScolaire || classe.anneeScolaire;
+
+      const existing = await this.model.findFirst({
+        where: {
+          code: newCode,
+          anneeScolaire: newAnnee,
+          NOT: { id: parseInt(id) }
+        }
+      });
+      if (existing) {
+        throw new Error(`Une classe avec le code "${newCode}" existe déjà pour l'année ${newAnnee}.`);
+      }
+    }
+
+    return await this.model.update({
+      where: { id: parseInt(id) },
+      data,
+      include: { _count: { select: { etudiants: true } } }
+    });
+  }
+
+  async archive(id) {
+    const classe = await this.findById(id);
+    if (classe._count.etudiants > 0) {
+      throw new Error(`Impossible d'archiver : ${classe._count.etudiants} étudiant(s) sont inscrits dans cette classe.`);
+    }
+
+    return await this.model.update({
+      where: { id: parseInt(id) },
+      data: { archived: true },
+      include: { _count: { select: { etudiants: true } } }
+    });
+  }
+
+  async findAllWithCount(includeArchived = false) {
+    return await this.model.findMany({
+      where: includeArchived ? {} : { archived: false },
+      include: { _count: { select: { etudiants: true } } }
+    });
+  }
+
+  async estVide(id) {
+    const classe = await this.findById(id);
+    return (classe?._count?.etudiants || 0) === 0;
   }
 
   async delete(id) {
-    return await prisma.classe.delete({
+    const classe = await this.findById(id);
+    if (classe._count.etudiants > 0) {
+      throw new Error(`Impossible de supprimer : ${classe._count.etudiants} étudiant(s) sont inscrits dans cette classe.`);
+    }
+
+    return await this.model.delete({
       where: { id: parseInt(id) }
     });
   }
 }
-
-export default new ClasseRepository();

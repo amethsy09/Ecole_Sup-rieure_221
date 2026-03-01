@@ -1,6 +1,6 @@
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import { URI } from "./env.js";
+import env from "./env.js";
 
 const options = {
   definition: {
@@ -12,7 +12,7 @@ const options = {
     },
     servers: [
       {
-        url: URI,
+        url: env.URI,
       },
     ],
   },
@@ -23,5 +23,5 @@ const swaggerSpec = swaggerJsdoc(options);
 
 export function setupSwagger(app) {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  console.log(`Swagger disponible sur ${URI}/api-docs`);
+  console.log(`Swagger disponible sur ${env.URI}/api-docs`);
 }
