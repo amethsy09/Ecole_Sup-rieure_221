@@ -517,7 +517,7 @@
 
 /**
  * @swagger
- * /cours:
+ * /api/cours:
  *   get:
  *     summary: Récupérer tous les cours
  *     tags: [Cours]
@@ -1232,7 +1232,7 @@
 
 /**
  * @swagger
- * /cours:
+ * /api/cours:
  *   get:
  *     summary: Récupérer tous les cours
  *     tags: [Cours]
@@ -1255,7 +1255,7 @@
 
 /**
  * @swagger
- * /cours/{id}:
+ * /api/cours/{id}:
  *   get:
  *     summary: Récupérer un cours par son ID
  *     tags: [Cours]
@@ -1285,7 +1285,7 @@
 
 /**
  * @swagger
- * /cours:
+ * /api/cours:
  *   post:
  *     summary: Créer un nouveau cours
  *     tags: [Cours]
@@ -1331,7 +1331,7 @@
 
 /**
  * @swagger
- * /cours/{id}:
+ * /api/cours/{id}:
  *   put:
  *     summary: Mettre à jour un cours existant
  *     tags: [Cours]
@@ -1376,7 +1376,7 @@
 
 /**
  * @swagger
- * /cours/{id}:
+ * /api/cours/{id}:
  *   delete:
  *     summary: Supprimer un cours
  *     tags: [Cours]
@@ -1406,7 +1406,7 @@
  */
 
 
-//separation du code 
+//separation du code
 
 /**
  * @swagger
@@ -1487,7 +1487,7 @@
 
 /**
  * @swagger
- * /etudiants:
+ * /api/etudiants:
  *   get:
  *     summary: Récupérer tous les étudiants
  *     tags: [Etudiants]
@@ -1519,7 +1519,7 @@
 
 /**
  * @swagger
- * /etudiants:
+ * /api/etudiants:
  *   post:
  *     summary: Créer un nouvel étudiant
  *     tags: [Etudiants]
@@ -1581,7 +1581,7 @@
 
 /**
  * @swagger
- * /etudiants/{id}:
+ * /api/etudiants/{id}:
  *   delete:
  *     summary: Supprimer un étudiant (bloqué si inscriptions existent)
  *     tags: [Etudiants]

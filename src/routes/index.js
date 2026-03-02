@@ -17,9 +17,13 @@ export default class Routes {
     });
     this.app.use("/api/inscriptions", inscriptionRoutes);
     this.app.use("/api/etudiants", etudiantRoutes);
-    this.app.use("/api/cours", coursRoutes);
-    this.app.use("/api/classe", classeRoutes);
+   // this.app.use("/api/cours", coursRoutes);
+   // this.app.use("/api/classes", classeRoutes);
     
+     const classRoutes = new classeRoutes();
+    this.app.use("/api/classes", classRoutes.getRouter());
+    const coursRoute = new coursRoutes();
+    this.app.use("/api/cours", coursRoute.getRouter());
   }
   
 }
