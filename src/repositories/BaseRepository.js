@@ -2,6 +2,9 @@
  * @interface BaseRepository
  */
 export class BaseRepository {
+  constructor(model) {
+    this.model = model;
+  }
   async findAll() {
     throw new Error("Method 'findAll()' must be implemented.");
   }

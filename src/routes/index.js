@@ -16,7 +16,7 @@ export default class Routes {
       res.send("Bienvenue sur l'API de gestion de l'école !");
     });
     this.app.use("/api/inscriptions", inscriptionRoutes);
-    this.app.use("/api/etudiants", etudiantRoutes);
+    //this.app.use("/api/etudiants", etudiantRoutes);
    // this.app.use("/api/cours", coursRoutes);
    // this.app.use("/api/classes", classeRoutes);
     
@@ -24,6 +24,8 @@ export default class Routes {
     this.app.use("/api/classes", classRoutes.getRouter());
     const coursRoute = new coursRoutes();
     this.app.use("/api/cours", coursRoute.getRouter());
+      const etudiantRoute = new etudiantRoutes();
+    this.app.use("/api/etudiants", etudiantRoute.getRouter());
   }
   
 }

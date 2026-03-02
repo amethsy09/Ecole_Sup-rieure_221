@@ -36,7 +36,7 @@ class InscriptionController {
   getById = async (req, res, next) => {
     try {
       const { id } = req.params;
-      const inscription = await this.service.repository.findById(id);
+      const inscription = await this.service.findById(id);
       
       if (!inscription) {
         return res.status(404).json({
