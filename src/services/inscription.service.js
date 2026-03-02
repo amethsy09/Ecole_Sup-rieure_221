@@ -2,7 +2,7 @@ import InscriptionRepository from '../repositories/inscription.repo.js';
 import database from '../config/db.js';
 class InscriptionService {
   constructor() {
-    this.repo = new InscriptionRepository();
+    this.repo = InscriptionRepository;
     this.prisma = database.getClient();
   }
   validateInscriptionDate(date) {
@@ -54,7 +54,7 @@ class InscriptionService {
     }
 
     // 2. Valider que la date n'est pas dans le futur
-    if (!this.validateInscription(dateInscription)) {
+    if (!this.validateInscriptionDate(dateInscription)) {
       throw {
         status: 400,
         message: 'La date d\'inscription ne peut pas être dans le futur',
@@ -148,6 +148,31 @@ async estInscrit(etudiantId) {
 async coursEstUtilise(coursId) {
   const count = await this.repo.countActiveByCours(coursId);
   return count > 0;
+}
+async findById(id) {
+  try {
+    const inscription = await this.repo.findById(id);
+    if (!inscription) {
+      throw {
+        status: 404,
+        message: `Inscription avec l'ID ${id} non trouvée`,
+        code: 'INSCRIPTION_NOT_FOUND'
+      };
+    }
+    return inscription;
+  } catch (error) {
+    // Si l'erreur a déjà un status (comme celle ci-dessus), on la relance
+    if (error.status) {
+      throw error;
+    }
+    // Sinon, c'est une erreur technique
+    console.error(`Erreur dans findById pour l'ID ${id}:`, error);
+    throw {
+      status: 500,
+      message: 'Erreur lors de la recherche de l\'inscription',
+      code: 'FIND_INSCRIPTION_ERROR'
+    };
+  }
 }
 
   }

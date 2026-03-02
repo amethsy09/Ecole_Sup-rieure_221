@@ -169,5 +169,57 @@ class InscriptionRepository extends BaseRepository {
       orderBy: { dateInscription: 'desc' }
     });
   }
+  async findByEtudiantAndCours(etudiantId, coursId, includeRelations = false) {
+  const query = {
+    where: {
+      etudiantId: parseInt(etudiantId),
+      coursId: parseInt(coursId)
+    }
+  };
+
+  if (includeRelations) {
+    query.include = {
+      etudiant: {
+        select: {
+          id: true,
+          prenom: true,
+          nom: true,
+          email: true,
+          classe: true
+        }
+      },
+      cours: {
+        select: {
+          id: true,
+          code: true,
+          libelle: true,
+          coefficient: true,
+          volumeHoraire: true
+        }
+      }
+    };
+  }
+
+  return this.model.findFirst(query);
 }
-export default InscriptionRepository;
+async countAllByEtudiant(etudiantId) {
+    return this.model.count({
+      where: {
+        etudiantId: parseInt(etudiantId)
+      }
+    });
+  }
+async countByEtudiant(etudiantId, statut = null) {
+    const where = { etudiantId: parseInt(etudiantId) };
+    if (statut) where.statut = statut;
+    
+    return this.model.count({ where });
+  }
+   async countByCours(coursId, statut = null) {
+    const where = { coursId: parseInt(coursId) };
+    if (statut) where.statut = statut;
+    
+    return this.model.count({ where });
+  }
+}
+export default new InscriptionRepository();

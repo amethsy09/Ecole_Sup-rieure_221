@@ -3,9 +3,8 @@ import { BaseRepository } from './BaseRepository.js';
 
 export default class ClasseRepository extends BaseRepository {
   constructor() {
-    super();
+    super(database.getClient().classe);
     this.db = database;
-    this.model = this.db.client.classe;
   }
 
   validateClasse(data) {
