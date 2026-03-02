@@ -21,14 +21,13 @@ class Database {
 
   async connect() {
     await this.client.$connect();
-    console.log("Base de données connectée");
+    
   }
 
   async disconnect() {
     await this.client.$disconnect();
-    console.log("Base de données déconnectée");
+    
   }
 }
-
 const database = new Database();
 export default database;

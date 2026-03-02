@@ -1,11 +1,11 @@
-import Database from "../config/db.js";
-import { BaseRepository } from "./base.repo.js";
+import database from "../config/db.js";
+import { BaseRepository } from "./BaseRepository.js";
 
 export default class CoursRepository extends BaseRepository {
   constructor() {
     super();
-    this.db = new Database();
-    this.model = this.db.client.cours;
+    this.db = database;
+    this.model = this.db.getClient().cours;
   }
 
   async findAll() {

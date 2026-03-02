@@ -1,5 +1,6 @@
 import { BaseRepository } from './BaseRepository.js';
 import database from '../config/db.js';
+
 class InscriptionRepository extends BaseRepository {
   constructor() {
     super();

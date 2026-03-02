@@ -1,8 +1,10 @@
 // src/routes/index.js
 import express from "express";
 import inscriptionRoutes from "./inscription.routes.js";
-//import etudiantRoutes from "./etudiant.routes.js";
-//import coursRoutes from "./cours.routes.js";
+import etudiantRoutes from "./etudiant.routes.js";
+import coursRoutes from "./cours.routes.js";
+import classeRoutes from "./classe.routes.js";
+
 export default class Routes {
   constructor(app) {
     this.app = app;
@@ -14,10 +16,14 @@ export default class Routes {
       res.send("Bienvenue sur l'API de gestion de l'école !");
     });
     this.app.use("/api/inscriptions", inscriptionRoutes);
-    //this.app.use("/api/etudiants", etudiantRoutes);
+    this.app.use("/api/etudiants", etudiantRoutes);
    // this.app.use("/api/cours", coursRoutes);
+   // this.app.use("/api/classes", classeRoutes);
     
-  
+     const classRoutes = new classeRoutes();
+    this.app.use("/api/classes", classRoutes.getRouter());
+    const coursRoute = new coursRoutes();
+    this.app.use("/api/cours", coursRoute.getRouter());
   }
   
 }
