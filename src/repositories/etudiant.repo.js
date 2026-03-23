@@ -1,4 +1,5 @@
 import database from "../config/db.js";
+
 import  BaseRepo  from "./base.repo.js";
 
 const prisma = database.getClient();

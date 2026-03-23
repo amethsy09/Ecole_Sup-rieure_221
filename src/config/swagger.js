@@ -52,7 +52,7 @@ const options = {
         },
         Etudiant: {
           type: "object",
-          required: ["prenom", "nom", "email", "dateNaissance", "classeId"],
+          required: ["prenom", "nom", "email", "dateNaissance", "classeId", "image"],
           properties: {
             id: { type: "integer", example: 1 },
             prenom: { type: "string", example: "Awa" },
@@ -60,6 +60,10 @@ const options = {
             email: { type: "string", example: "awa.diop@ecole221.sn" },
             dateNaissance: { type: "string", format: "date" },
             classeId: { type: "integer", example: 1 },
+            image: {
+              type: "string",
+              example: "https://res.cloudinary.com/...",
+            },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" },
           },

@@ -1526,7 +1526,7 @@
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required: [prenom, nom, email, dateNaissance, classeId]
@@ -1546,6 +1546,9 @@
  *                 type: string
  *                 format: date
  *                 example: "2002-03-14"
+ *               image:
+ *                 type: string
+ *                 format: binary
  *               classeId:
  *                 type: integer
  *                 example: 1
