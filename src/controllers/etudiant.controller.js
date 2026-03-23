@@ -1,6 +1,6 @@
 import EtudiantService from "../services/etudiant.service.js";
 import cloudinary from "../config/cloudinary.js";
-import { multerConfig } from "../config/multer.js"; // adapte le path
+import { multerConfig } from "../config/multer.js";
 
 const etudiantService = new EtudiantService();
 
