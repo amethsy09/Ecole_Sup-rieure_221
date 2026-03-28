@@ -77,7 +77,19 @@ export const list = async (req, res) => {
 export const remove = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    await etudiantService.deleteEtudiant(id);
+    const deletedEtudiant = await etud/iantService.deleteEtudiant(id);
+
+    // Supprimer l'image de Cloudinary si elle existe
+    if (deletedEtudiant && deletedEtudiant.image) {
+      try {
+        // Extraction du public_id (ex: etudiants/nom_image)
+        const publicId = deletedEtudiant.image.split("/").slice(-2).join("/").split(".")[0];
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudErr) {
+        console.error("Erreur suppression Cloudinary:", cloudErr);
+      }
+    }
+
     res.json({ message: "Étudiant supprimé avec succès" });
   } catch (err) {
     res
