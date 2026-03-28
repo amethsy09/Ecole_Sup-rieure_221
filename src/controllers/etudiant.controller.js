@@ -4,7 +4,7 @@ import { multerConfig } from "../config/multer.js";
 
 const etudiantService = new EtudiantService();
 
-export const creates = async (req, res) => {
+/*export const creates = async (req, res) => {
   try {
     const etudiant = await etudiantService.createEtudiant(req.body);
     res.status(201).json(etudiant);
@@ -13,12 +13,12 @@ export const creates = async (req, res) => {
       .status(err.status || 500)
       .json({ error: err.message || "Internal Server Error" });
   }
-};
+};*/
 export const create = async (req, res) => {
   try {
     const { nom, prenom, email, dateNaissance, classeId } = req.body;
 
-    // ✅ Validation rapide
+    // Validation rapide
     if (!nom || !prenom || !email || !dateNaissance || !classeId) {
       return res.status(400).json({ error: "Tous les champs obligatoires doivent être fournis." });
     }
@@ -45,7 +45,7 @@ export const create = async (req, res) => {
       prenom,
       email,
       dateNaissance: new Date(dateNaissance),
-      classeId: parseInt(classeId),
+      classeId,
       image: imageUrl,
     });
 
