@@ -77,7 +77,7 @@ export const list = async (req, res) => {
 export const remove = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const deletedEtudiant = await etud/iantService.deleteEtudiant(id);
+    const deletedEtudiant = await etudiantService.deleteEtudiant(id);
 
     // Supprimer l'image de Cloudinary si elle existe
     if (deletedEtudiant && deletedEtudiant.image) {
