@@ -6,7 +6,7 @@ export const createEtudiantSchema = z
   nom: z.string().trim().min(2, "Nom min 2 caractères"),
   email: z.string().trim().email("Email invalide"),
   dateNaissance: z.coerce.date(),
-  classeId: z.coerce.number().int().positive("classeId invalide"),
+  classeId: z.number().int().positive("classeId invalide"),
   })
   .refine((d) => d.dateNaissance <= new Date(), {
     message: "dateNaissance ne peut pas être dans le futur",
