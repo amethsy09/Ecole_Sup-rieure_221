@@ -6,6 +6,7 @@ export default class MulterConfig {
     this.upload = multer({
       storage: this.storage,
       fileFilter: this.fileFilter,
+      limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
     });
   }
 

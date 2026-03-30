@@ -14,14 +14,9 @@ const etudiantService = new EtudiantService();
       .json({ error: err.message || "Internal Server Error" });
   }
 };*/
-export const create = async (req, res) => {
+export const create = async (req, res, next) => {
   try {
     const { nom, prenom, email, dateNaissance, classeId } = req.body;
-
-    // Validation rapide
-    if (!nom || !prenom || !email || !dateNaissance || !classeId) {
-      return res.status(400).json({ error: "Tous les champs obligatoires doivent être fournis." });
-    }
 
     let imageUrl = null;
 
@@ -51,30 +46,27 @@ export const create = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Etudiant créé",
+      message: "Etudiant créé avec succès",
       data: etudiant,
     });
   } catch (err) {
-    console.error("Error creating etudiant:", err);
-    // Convertir n’importe quel objet d’erreur en string lisible
-    let errorMessage = typeof err.message === "string" ? err.message : JSON.stringify(err);
-    res.status(err.status || 500).json({
-      error: errorMessage,
-    });
-  }
-};
-export const list = async (req, res) => {
-  try {
-    const etudiants = await etudiantService.listEtudiants();
-    res.json(etudiants);
-  } catch (err) {
-    res
-      .status(err.status || 500)
-      .json({ error: err.message || "Internal Server Error" });
+    next(err);
   }
 };
 
-export const remove = async (req, res) => {
+export const list = async (req, res, next) => {
+  try {
+    const etudiants = await etudiantService.listEtudiants();
+    res.json({
+      success: true,
+      data: etudiants
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const remove = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const deletedEtudiant = await etudiantService.deleteEtudiant(id);
@@ -82,18 +74,19 @@ export const remove = async (req, res) => {
     // Supprimer l'image de Cloudinary si elle existe
     if (deletedEtudiant && deletedEtudiant.image) {
       try {
-        // Extraction du public_id (ex: etudiants/nom_image)
         const publicId = deletedEtudiant.image.split("/").slice(-2).join("/").split(".")[0];
-        await cloudinary.uploader.destroy(publicId);
+        const result = await cloudinary.uploader.destroy(publicId);
+        console.log("Résultat suppression Cloudinary:", result);
       } catch (cloudErr) {
         console.error("Erreur suppression Cloudinary:", cloudErr);
       }
     }
 
-    res.json({ message: "Étudiant supprimé avec succès" });
+    res.json({ 
+      success: true,
+      message: "Étudiant supprimé avec succès" 
+    });
   } catch (err) {
-    res
-      .status(err.status || 500)
-      .json({ error: err.message || "Internal Server Error" });
+    next(err);
   }
 };
