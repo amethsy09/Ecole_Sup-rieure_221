@@ -13,8 +13,8 @@ DROP INDEX "classes_code_annee_scolaire_key";
 ALTER TABLE "classes" ADD COLUMN     "sous_classe" TEXT DEFAULT '';
 
 -- AlterTable
-ALTER TABLE "etudiants" ADD COLUMN     "matricule" TEXT NOT NULL;
-
+ALTER TABLE "etudiants" ADD COLUMN IF NOT EXISTS "matricule" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "etudiants" ALTER COLUMN "matricule" DROP DEFAULT;
 -- CreateIndex
 CREATE UNIQUE INDEX "classes_code_annee_scolaire_sous_classe_key" ON "classes"("code", "annee_scolaire", "sous_classe");
 
