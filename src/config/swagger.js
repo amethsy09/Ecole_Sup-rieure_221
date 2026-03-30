@@ -15,10 +15,11 @@ const options = {
       },
     },
     servers: [
-      {
-        url: env.URI,
-        description: "Development server",
-      },
+      { 
+        url: process.env.NODE_ENV === 'production' 
+          ? 'https://ecole-sup-rieure-221.onrender.com' 
+          : 'http://localhost:5000' 
+      }
     ],
     components: {
       securitySchemes: {
