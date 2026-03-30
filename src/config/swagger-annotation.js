@@ -45,6 +45,10 @@
  *           type: string
  *           description: Année académique concernée
  *           example: "2025-2026"
+ *         sousClasse:
+ *           type: string
+ *           description: Sous-classe (optionnel)
+ *           example: "A"
  *         archived:
  *           type: boolean
  *           description: Indique si la classe est archivée
@@ -75,6 +79,9 @@
  *         anneeScolaire:
  *           type: string
  *           example: "2025-2026"
+ *         sousClasse:
+ *           type: string
+ *           example: "A"
  *
  *     ClasseUpdateInput:
  *       type: object
@@ -85,6 +92,8 @@
  *         libelle:
  *           type: string
  *         anneeScolaire:
+ *           type: string
+ *         sousClasse:
  *           type: string
  *
  *     ErrorResponse:
@@ -1223,7 +1232,8 @@
  *                   code: "COURS_NOT_FOUND"
  *       500:
  *         description: Erreur serveur
- *//**
+ */
+/**
  * @swagger
  * tags:
  *   name: Cours
@@ -1457,6 +1467,9 @@
  *         id:
  *           type: integer
  *           example: 1
+ *         matricule:
+ *           type: string
+ *           example: "ETU-2026-0001"
  *         prenom:
  *           type: string
  *           example: "Awa"

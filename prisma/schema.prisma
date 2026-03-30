@@ -13,18 +13,20 @@ model Classe {
   id          Int        @id @default(autoincrement())
   code        String
   libelle     String
+  sousClasse  String?    @default("") @map("sous_classe")
   anneeScolaire String   @map("annee_scolaire")
   archived    Boolean    @default(false)
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
   etudiants   Etudiant[]
 
-  @@unique([code, anneeScolaire])
+  @@unique([code, anneeScolaire, sousClasse])
   @@map("classes")
 }
 
 model Etudiant {
   id            Int           @id @default(autoincrement())
+  matricule     String        @unique
   prenom        String
   nom           String
   email         String        @unique

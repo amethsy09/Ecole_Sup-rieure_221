@@ -28,6 +28,19 @@ export class EtudiantRepo extends BaseRepo {
     return this.model.create({ data });
   }
 
+  findLastMatricule(prefix) {
+    return this.model.findFirst({
+      where: {
+        matricule: {
+          startsWith: prefix,
+        },
+      },
+      orderBy: {
+        matricule: "desc",
+      },
+    });
+  }
+
   delete(id) {
     return this.model.delete({ where: { id: parseInt(id) } });
   }

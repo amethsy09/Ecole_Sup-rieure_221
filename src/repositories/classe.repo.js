@@ -34,26 +34,37 @@ export default class ClasseRepository extends BaseRepository {
 
   async create(data) {
     this.validateClasse(data);
+    const sousClasse = data.sousClasse || "";
     const existing = await this.model.findFirst({
-      where: { code: data.code, anneeScolaire: data.anneeScolaire }
+      where: { code: data.code, anneeScolaire: data.anneeScolaire, sousClasse }
     });
     if (existing) {
-      throw new Error(`Une classe avec le code "${data.code}" existe déjà pour l'année ${data.anneeScolaire}.`);
+      const msg = sousClasse 
+        ? `Une classe avec le code "${data.code}" et la sous-classe "${sousClasse}" existe déjà pour l'année ${data.anneeScolaire}.`
+        : `Une classe avec le code "${data.code}" existe déjà pour l'année ${data.anneeScolaire}.`;
+      throw new Error(msg);
     }
-    return await this.model.create({ data });
+    return await this.model.create({ data: { ...data, sousClasse } });
   }
 
   async update(id, data) {
     this.validateClasse(data);
-    if (data.code || data.anneeScolaire) {
+    if (data.code || data.anneeScolaire || data.sousClasse !== undefined) {
       const classe = await this.findById(id);
       const newCode = data.code || classe.code;
       const newAnnee = data.anneeScolaire || classe.anneeScolaire;
+      const newSousClasse = data.sousClasse !== undefined ? (data.sousClasse || "") : (classe.sousClasse || "");
+      
       const existing = await this.model.findFirst({
-        where: { code: newCode, anneeScolaire: newAnnee, NOT: { id: parseInt(id) } }
+        where: { 
+          code: newCode, 
+          anneeScolaire: newAnnee, 
+          sousClasse: newSousClasse,
+          NOT: { id: parseInt(id) } 
+        }
       });
       if (existing) {
-        throw new Error(`Une classe avec le code "${newCode}" existe déjà pour l'année ${newAnnee}.`);
+        throw new Error(`Une classe avec le code "${newCode}" et la sous-classe "${newSousClasse}" existe déjà pour l'année ${newAnnee}.`);
       }
     }
     return await this.model.update({

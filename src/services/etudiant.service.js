@@ -43,6 +43,25 @@ export default class EtudiantService {
     this.classeRepo = new ClasseRepository(); // attention à l'instanciation
   }
 
+  async generateMatricule() {
+    const year = new Date().getFullYear();
+    const prefix = `ETU-${year}-`;
+
+    const lastStudent = await this.etudiantRepo.findLastMatricule(prefix);
+
+    let nextNumber = 1;
+    if (lastStudent && lastStudent.matricule) {
+      const parts = lastStudent.matricule.split("-");
+      const lastNumber = parseInt(parts[2]);
+      if (!isNaN(lastNumber)) {
+        nextNumber = lastNumber + 1;
+      }
+    }
+
+    const sequence = nextNumber.toString().padStart(4, "0");
+    return `${prefix}${sequence}`;
+  }
+
   // Création d'un étudiant
   async createEtudiant(payload) {
     // 1️⃣ Vérifier que la classe existe et n'est pas archivée
@@ -57,7 +76,10 @@ export default class EtudiantService {
       throw error(409, "Email déjà utilisé");
     }
 
-    // 3️⃣ Créer l'étudiant
+    // 3️⃣ Générer le matricule
+    payload.matricule = await this.generateMatricule();
+
+    // 4️⃣ Créer l'étudiant
     return this.etudiantRepo.create(payload);
   }
 
