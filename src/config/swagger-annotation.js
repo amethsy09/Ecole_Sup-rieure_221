@@ -1,24 +1,10 @@
 /**
  * @swagger
- * openapi: 3.0.0
- * info:
- *   title: API Gestion Scolaire - Ecole Supérieure 221
- *   version: 1.0.0
- *   description: >
- *     API REST permettant la gestion des classes scolaires.
- *     Elle permet de créer, consulter, modifier, archiver (soft delete)
- *     et supprimer définitivement des classes.
- *     Toutes les réponses sont retournées au format JSON.
- * servers:
- *   - url: http://localhost:3001
- *     description: Serveur local de développement
- */
-
-/**
- * @swagger
  * tags:
  *   - name: Classes
  *     description: Endpoints liés à la gestion des classes scolaires
+ *   - name: SousClasses
+ *     description: Endpoints liés à la gestion des sous-classes
  */
 
 /**
@@ -45,26 +31,27 @@
  *           type: string
  *           description: Année académique concernée
  *           example: "2025-2026"
- *         sousClasse:
- *           type: string
- *           description: Sous-classe (optionnel)
- *           example: "A"
+ *         sousClasses:
+ *           type: array
+ *           description: Liste optionnelle de sous-classes. Si absente ou vide, la classe est non divisee.
+ *           items:
+ *             type: string
  *         archived:
  *           type: boolean
- *           description: Indique si la classe est archivée
+ *           description: Indique si la classe est archivee
  *           example: false
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: Date de création
+ *           description: Date de creation
  *         updatedAt:
  *           type: string
  *           format: date-time
- *           description: Date de dernière modification
+ *           description: Date de derniere modification
  *
  *     ClasseInput:
  *       type: object
- *       description: Données nécessaires pour créer une classe
+ *       description: Donnees necessaires pour creer une classe
  *       required:
  *         - code
  *         - libelle
@@ -79,13 +66,14 @@
  *         anneeScolaire:
  *           type: string
  *           example: "2025-2026"
- *         sousClasse:
- *           type: string
- *           example: "A"
+ *         sousClasses:
+ *           type: array
+ *           items:
+ *             type: string
  *
  *     ClasseUpdateInput:
  *       type: object
- *       description: Données modifiables d'une classe
+ *       description: Donnees modifiables d'une classe
  *       properties:
  *         code:
  *           type: string
@@ -93,8 +81,10 @@
  *           type: string
  *         anneeScolaire:
  *           type: string
- *         sousClasse:
- *           type: string
+ *         sousClasses:
+ *           type: array
+ *           items:
+ *             type: string
  *
  *     ErrorResponse:
  *       type: object
@@ -119,7 +109,7 @@
  *     summary: Créer une nouvelle classe
  *     description: >
  *       Permet d'ajouter une nouvelle classe dans le système.
- *       Le couple (code + année scolaire) doit être unique.
+ *       Une classe est unique par (code + anneeScolaire). Elle peut avoir 0, 1 ou plusieurs sous-classes.
  *     tags: [Classes]
  *     requestBody:
  *       required: true
@@ -334,13 +324,155 @@
  *           type: array
  *           items:
  *             type: string
+ *     SousClasse:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         code:
+ *           type: string
+ *           example: "L1-INFO-A"
+ *         libelle:
+ *           type: string
+ *           example: "Sous-classe A"
+ *         niveau:
+ *           type: integer
+ *           nullable: true
+ *           example: 1
+ *         classeId:
+ *           type: integer
+ *           example: 1
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *     SousClasseInput:
+ *       type: object
+ *       required:
+ *         - code
+ *         - classeId
+ *       properties:
+ *         code:
+ *           type: string
+ *           example: "L1-INFO-A"
+ *         libelle:
+ *           type: string
+ *           example: "Sous-classe A"
+ *         niveau:
+ *           type: integer
+ *           example: 1
+ *         classeId:
+ *           type: integer
+ *           example: 1
+ *     SousClasseUpdateInput:
+ *       type: object
+ *       properties:
+ *         code:
+ *           type: string
+ *         libelle:
+ *           type: string
+ *         niveau:
+ *           type: integer
+ *         classeId:
+ *           type: integer
  */
+
+
 
 /**
  * @swagger
- * tags:
- *   name: Classes
- *   description: Gestion des classes scolaires
+ * /api/sousclasses:
+ *   get:
+ *     summary: Récupérer toutes les sous-classes
+ *     tags: [SousClasses]
+ *     responses:
+ *       200:
+ *         description: Liste de sous-classes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/SousClasse'
+ *   post:
+ *     summary: Créer une sous-classe
+ *     tags: [SousClasses]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SousClasseInput'
+ *     responses:
+ *       201:
+ *         description: Sous-classe créée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SousClasse'
+ *       400:
+ *         description: Données invalides
+ *
+ * /api/sousclasses/{id}:
+ *   get:
+ *     summary: Obtenir une sous-classe par ID
+ *     tags: [SousClasses]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Sous-classe trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SousClasse'
+ *       404:
+ *         description: Sous-classe non trouvée
+ *   put:
+ *     summary: Mettre à jour une sous-classe
+ *     tags: [SousClasses]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SousClasseUpdateInput'
+ *     responses:
+ *       200:
+ *         description: Sous-classe mise à jour
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SousClasse'
+ *       404:
+ *         description: Sous-classe non trouvée
+ *   delete:
+ *     summary: Supprimer une sous-classe
+ *     tags: [SousClasses]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Sous-classe supprimée
+ *       404:
+ *         description: Sous-classe non trouvée
  */
 
 /**
@@ -1643,3 +1775,4 @@
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
+

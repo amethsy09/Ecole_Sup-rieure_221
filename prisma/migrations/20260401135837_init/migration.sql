@@ -6,6 +6,7 @@ CREATE TABLE "classes" (
     "id" SERIAL NOT NULL,
     "code" TEXT NOT NULL,
     "libelle" TEXT NOT NULL,
+    "niveau" INTEGER,
     "annee_scolaire" TEXT NOT NULL,
     "archived" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -15,8 +16,22 @@ CREATE TABLE "classes" (
 );
 
 -- CreateTable
+CREATE TABLE "sous_classes" (
+    "id" SERIAL NOT NULL,
+    "code" TEXT NOT NULL,
+    "libelle" TEXT,
+    "niveau" INTEGER,
+    "classe_id" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "sous_classes_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "etudiants" (
     "id" SERIAL NOT NULL,
+    "matricule" TEXT NOT NULL,
     "prenom" TEXT NOT NULL,
     "nom" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -24,6 +39,7 @@ CREATE TABLE "etudiants" (
     "classe_id" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "image" TEXT,
 
     CONSTRAINT "etudiants_pkey" PRIMARY KEY ("id")
 );
@@ -58,6 +74,12 @@ CREATE TABLE "inscriptions" (
 CREATE UNIQUE INDEX "classes_code_annee_scolaire_key" ON "classes"("code", "annee_scolaire");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "sous_classes_classe_id_code_key" ON "sous_classes"("classe_id", "code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "etudiants_matricule_key" ON "etudiants"("matricule");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "etudiants_email_key" ON "etudiants"("email");
 
 -- CreateIndex
@@ -65,6 +87,9 @@ CREATE UNIQUE INDEX "cours_code_key" ON "cours"("code");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "inscriptions_etudiant_id_cours_id_key" ON "inscriptions"("etudiant_id", "cours_id");
+
+-- AddForeignKey
+ALTER TABLE "sous_classes" ADD CONSTRAINT "sous_classes_classe_id_fkey" FOREIGN KEY ("classe_id") REFERENCES "classes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "etudiants" ADD CONSTRAINT "etudiants_classe_id_fkey" FOREIGN KEY ("classe_id") REFERENCES "classes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -4,6 +4,7 @@ import InscriptionRoute from "./inscription.routes.js";
 import EtudiantRoute from "./etudiant.routes.js";
 import CoursRoute from "./cours.routes.js";
 import ClasseRoute from "./classe.routes.js";
+import SousClasseRoute from "./sousclasse.routes.js";
 
 export default class Routes {
   constructor(app) {
@@ -30,5 +31,9 @@ export default class Routes {
     // Etudiants
     const etudiantRoute = new EtudiantRoute();
     this.app.use("/api/etudiants", etudiantRoute.getRouter());
+
+    // Sous-classes
+    const sousClasseRoute = new SousClasseRoute();
+    this.app.use("/api/sousclasses", sousClasseRoute.getRouter());
   }
 }

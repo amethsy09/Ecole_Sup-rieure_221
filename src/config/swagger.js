@@ -69,6 +69,19 @@ const options = {
             updatedAt: { type: "string", format: "date-time" },
           },
         },
+        SousClasse: {
+          type: "object",
+          required: ["code", "classeId"],
+          properties: {
+            id: { type: "integer", example: 1 },
+            code: { type: "string", example: "L1-INFO-A" },
+            libelle: { type: "string", example: "Sous-classe A" },
+            niveau: { type: "integer", example: 1 },
+            classeId: { type: "integer", example: 1 },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
         Error: {
           type: "object",
           properties: {
