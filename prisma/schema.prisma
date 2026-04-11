@@ -10,18 +10,33 @@ datasource db {
 }
 
 model Classe {
-  id          Int        @id @default(autoincrement())
-  code        String
-  libelle     String
-  sousClasse  String?    @default("") @map("sous_classe")
-  anneeScolaire String   @map("annee_scolaire")
-  archived    Boolean    @default(false)
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
-  etudiants   Etudiant[]
+  id            Int          @id @default(autoincrement())
+  code          String
+  libelle       String
+  niveau        Int?
+  anneeScolaire String       @map("annee_scolaire")
+  archived      Boolean      @default(false)
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  sousClasses   SousClasse[]
+  etudiants     Etudiant[]
 
-  @@unique([code, anneeScolaire, sousClasse])
+  @@unique([code, anneeScolaire])
   @@map("classes")
+}
+
+model SousClasse {
+  id        Int      @id @default(autoincrement())
+  code      String
+  libelle   String?
+  niveau    Int?
+  classeId  Int      @map("classe_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  classe    Classe   @relation(fields: [classeId], references: [id], onDelete: Cascade)
+
+  @@unique([classeId, code])
+  @@map("sous_classes")
 }
 
 model Etudiant {
@@ -34,7 +49,7 @@ model Etudiant {
   classeId      Int           @map("classe_id")
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @updatedAt @map("updated_at")
-  image        String?
+  image         String?
   classe        Classe        @relation(fields: [classeId], references: [id])
   inscriptions  Inscription[]
 
@@ -42,28 +57,28 @@ model Etudiant {
 }
 
 model Cours {
-  id           Int           @id @default(autoincrement())
-  code         String        @unique
-  libelle      String
-  coefficient  Float
-  volumeHoraire Int          @map("volume_horaire")
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
-  inscriptions Inscription[]
+  id            Int           @id @default(autoincrement())
+  code          String        @unique
+  libelle       String
+  coefficient   Float
+  volumeHoraire Int           @map("volume_horaire")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  inscriptions  Inscription[]
 
   @@map("cours")
 }
 
 model Inscription {
-  id              Int              @id @default(autoincrement())
-  etudiantId      Int              @map("etudiant_id")
-  coursId         Int              @map("cours_id")
-  dateInscription DateTime         @map("date_inscription")
+  id              Int               @id @default(autoincrement())
+  etudiantId      Int               @map("etudiant_id")
+  coursId         Int               @map("cours_id")
+  dateInscription DateTime          @map("date_inscription")
   statut          StatutInscription @default(ACTIVE)
-  createdAt       DateTime         @default(now()) @map("created_at")
-  updatedAt       DateTime         @updatedAt @map("updated_at")
-  etudiant        Etudiant         @relation(fields: [etudiantId], references: [id])
-  cours           Cours            @relation(fields: [coursId], references: [id])
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  etudiant        Etudiant          @relation(fields: [etudiantId], references: [id])
+  cours           Cours             @relation(fields: [coursId], references: [id])
 
   @@unique([etudiantId, coursId])
   @@map("inscriptions")
